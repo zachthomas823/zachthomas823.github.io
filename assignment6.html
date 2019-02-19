@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
+        <title>Zach Thomas HCDE 439: Physical Computing Assignment #6 Datalogging!</title>
+
+        <link href="style.css" media="screen" rel="stylesheet" type="text/css" />
+
+    </head>
+    <body>
+
+        <div class="header">
+          <h1>Zach Thomas Assignment 6!</h1>
+          <p>
+          <img src="assignment6/assignment6.gif" width=300></a> </br>
+          Here is the functionality of the circuit. As the potentiometer is turned the circle on the screen steadily changes from RGB(0,255,0) to RGB(0,0,255) </br> </br>
+          <img src="assignment6/assignment6_bb.png" width=800></a> </br>
+          Here is a picture of the full circuitry </br> </br>
+          <img src="assignment6/assignment6_schem.png" width=400></a> </br>
+          Here is a diagram of the circuit. There is a 10,000 ohm resistor betwen the potentiometer and ground as well as between the potentiometer and A1.</br>
+          This prevents the arduino from having a short in the event of the potentiometer being turned all the way one direction or the other. </br> </br>
+          </p>
+          <h5>Arduino Code</h5>
+          <pre><code>
+            //Zach Thomas
+            //HCDE 439: Physical Computing
+            //Winter 2019
+
+            void setup() {
+              Serial.begin(9600); //Setting up the serial functionality
+            }
+
+            void loop() {
+              int potentiometer = analogRead(1); //read the analog input from pin A1
+              Serial.println(potentiometer); //print the reading from pin A1 to serial
+              delay(50); //Wait 50 milliseconds.
+          </code></pre>
+          <h5>index.html</h5>
+          <img src="assignment6/HTML.png" width= 1000</a> </br>
+          <h5>sketch.js</h5>
+          <pre><code>
+            var serial; // variable to hold an instance of the serialport library
+            var portName = 'com11' //rename to the name of your port
+            var datain; //some data coming in over serial!
+            var xPos = 0;
+
+
+            function setup() {
+              serial = new p5.SerialPort();       // make a new instance of the serialport library
+              serial.on('list', printList);       // set a callback function for the serialport list event
+              serial.on('connected', serverConnected); // callback for connecting to the server
+              serial.on('open', portOpen);        // callback for the port opening
+              serial.on('data', serialEvent);     // callback for when new data arrives
+              serial.on('error', serialError);    // callback for errors
+              serial.on('close', portClose);      // callback for the port closing
+
+              serial.list();                      // list the serial ports
+              serial.open(portName);              // open a serial port
+              createCanvas(1200, 800);
+              background(0x08, 0x16, 0x40);
+            }
+
+            // get the list of ports:
+            function printList(portList) {
+             // portList is an array of serial port names
+             for (var i = 0; i < portList.length; i++) {
+             // Display the list the console:
+               print(i + " " + portList[i]);
+             }
+            }
+
+            function serverConnected() {
+              print('connected to server.');
+            }
+
+            function portOpen() {
+              print('the serial port opened.')
+            }
+
+            function serialError(err) {
+              print('Something went wrong with the serial port. ' + err);
+            }
+
+            function portClose() {
+              print('The serial port closed.');
+            }
+
+            function serialEvent() {
+              if (serial.available()) {
+              	datain = Number(serial.readLine());
+                    //console.log(datain);
+              }
+            }
+
+            function coloredCircle(data) {
+              var color = map(data, 0, 1024, 0, 255);
+
+              fill(0, color, 255 - color);
+              circle(200, 200, 200)
+            }
+
+            function draw() {
+              coloredCircle(datain);
+            }
+          </code></pre>
+        </div>
+
+    </body>
+</html>
